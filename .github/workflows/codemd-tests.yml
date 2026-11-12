@@ -1,0 +1,50 @@
+# Written by CodeMD (codemd.dev) on its own branch to run tests.
+name: CodeMD test run
+'on':
+  push:
+    branches:
+    - codemd-test-runs
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.8'
+    - name: 'CodeMD: install dependencies'
+      working-directory: ${{ github.workspace }}/scripts
+      run: |
+        python -m pip install --upgrade pip
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        for f in requirements-dev.txt requirements_dev.txt requirements-test.txt; do if [ -f "$f" ]; then pip install -r "$f"; fi; done
+        if [ -f pyproject.toml ] || [ -f setup.py ]; then pip install -e ".[test]" || pip install -e ".[dev]" || pip install -e .; fi
+        pip install pytest coverage
+        if [ -d src ] && [ -n "$(find src -maxdepth 2 -name __init__.py -print -quit)" ]; then
+          echo "PYTHONPATH=$PWD/src${PYTHONPATH:+:$PYTHONPATH}" >> "$GITHUB_ENV"
+        fi
+    - name: 'CodeMD test 1/2: scripts/tests/test_validate_links.py'
+      working-directory: ${{ github.workspace }}
+      run: bash .codemd/run-test.sh 0
+      timeout-minutes: 10
+      continue-on-error: true
+    - name: 'CodeMD test 2/2: scripts/tests/test_validate_links.py'
+      working-directory: ${{ github.workspace }}
+      run: bash .codemd/run-test.sh 1
+      timeout-minutes: 10
+      continue-on-error: true
+    - name: 'CodeMD: determine test result'
+      if: always()
+      working-directory: ${{ github.workspace }}
+      run: bash .codemd/run-test.sh finalize
+    - name: 'CodeMD: keep coverage reports'
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: codemd-coverage-reports
+        path: codemd-reports
+        if-no-files-found: ignore
+        retention-days: 90

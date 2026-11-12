@@ -1,0 +1,53 @@
+{
+  "base_sha": "02e0fcb61dc0bb497bc961714652cf4033b13d5a",
+  "change_source": "compare",
+  "changed_component_count": 3,
+  "changed_components": [
+    ".github",
+    "[root]",
+    "scripts"
+  ],
+  "changed_file_count": 6,
+  "changed_function_count": 1,
+  "changed_functions": [
+    "scripts.validate.links.check_duplicate_links"
+  ],
+  "deploy_targets": [],
+  "head_sha": "7afa900de6f92e617fdd024d2140a7a40d8e1ecb",
+  "impacted_test_count": 1,
+  "impacted_tests": [
+    "scripts/tests/test_validate_links.py"
+  ],
+  "lists_truncated": false,
+  "reason": "Every selected test is connected to the changed code by CodeMD's deterministic discovery.",
+  "requires_full_suite": false,
+  "schema_version": 1,
+  "test_selection": [
+    {
+      "changed_file_count": 1,
+      "changed_files": [
+        "scripts/tests/test_validate_links.py"
+      ],
+      "changed_files_truncated": false,
+      "language": "python",
+      "selected_by": [
+        "changed_test"
+      ],
+      "test_file": "scripts/tests/test_validate_links.py"
+    },
+    {
+      "changed_file_count": 1,
+      "changed_files": [
+        "scripts/validate/links.py"
+      ],
+      "changed_files_truncated": false,
+      "language": "python",
+      "selected_by": [
+        "callgraph"
+      ],
+      "test_file": "scripts/tests/test_validate_links.py"
+    }
+  ],
+  "unresolved_file_count": 0,
+  "unresolved_files": []
+}
